@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 18 Access: Dec 2nd</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden; /* Prevent scrollbars from particles */
+        }
+        
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2 {
+            color: #aec6cf;
+            text-shadow: 0 0 10px rgba(174, 198, 207, 0.3);
+        }
+
+        input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #aec6cf;
+            color: #fff;
+            padding: 12px;
+            font-size: 1.2rem;
+            width: 80%;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+        
+        input:focus {
+            box-shadow: 0 0 10px rgba(174, 198, 207, 0.4);
+            border-color: #fff;
+        }
+
+        button {
+            background: #aec6cf;
+            color: #0f2027;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: #fff;
+            box-shadow: 0 0 20px rgba(174, 198, 207, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .hidden { display: none; }
+        
+        .message-box {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+            padding-bottom: 20px;
+            color: #f0f0f0;
+        }
+        
+        .invite-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border: 1px solid rgba(174, 198, 207, 0.3);
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        
+        h3 {
+            color: #aec6cf;
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+            box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .footer { margin-top: 20px; font-size: 0.8rem; color: #8899a6; }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="container" id="loginScreen">
+        <h2>🔒 SYSTEM LOCKED</h2>
+        <p>Enter your First Name to access the invite:</p>
+        <input type="text" id="username" placeholder="e.g., Atharva">
+        <br>
+        <button onclick="unlockInvite()">ACCESS</button>
+        <p id="errorMsg" style="color: #ff6b6b; margin-top: 10px;"></p>
+    </div>
+
+    <div class="container hidden" id="inviteScreen">
+        <h2 id="greeting"></h2>
+        <div class="message-box" id="personalNote"></div>
+        
+        <div class="invite-card">
+            <h3>🎉 YOU ARE INVITED! 🎉</h3>
+            <p><strong>Mission:</strong> Birthday Treat & Chill</p>
+            <p><strong>Date:</strong> Dec 2nd (Monday)</p>
+            <p><strong>Time:</strong> 2:00 PM</p>
+            <p><strong>Location:</strong> Dad & Sons Cafe</p>
+            <p style="font-size: 0.9rem; margin-top: 15px; color: #aec6cf;">*Be there on time. Level 18 waits for no one.*</p>
+            
+            <button class="whatsapp-btn" onclick="confirmAttendance()">
+                Confirm Attendance
+            </button>
+        </div>
+        
+        <div class="footer">
+            System ID: B-DAY-18 // Status: CONFIRMED
+        </div>
+    </div>
+
+    <script>
+        // DATABASE OF FRIENDS
+        const friendData = {
+            "dipendra": "You’ve been a constant part of the chaos. From random laughs to serious talks, having you around just makes everything better. The squad isn't complete without its core.",
+            "atharva": "The powerhouse of the group! You bring the energy (and the muscle 💪). My 18th wouldn't be a celebration without my strongest brother there.",
+            "prachi": "You bring a unique vibe that keeps the group grounded. Thank you for being such a kind and genuine friend. The celebration needs your smile!",
+            "kavya": "One of the most supportive people I know. You always know how to lighten the mood. Seriously, having you there is going to make the evening 10x better.",
+            "mrudula": "You have this amazing ability to make everyone feel included. Thank you for the good vibes always. It’s strictly required that you be there!",
+            "haya": "The life of the party! You bring the fun wherever you go. I can't imagine hitting this milestone without your crazy energy nearby.",
+            "moksha": "A true friend who’s always there. I value your friendship more than I probably say out loud. Come make this evening memorable with us!",
+            "anurag": "My guy! We've had some crazy times, and I need you there to make sure my 18th is legendary. Let's make some noise at the cafe.",
+            "ankita": "You are one of the sweetest people in the circle. Your presence brings a really happy vibe, and I definitely want you there when I cut the cake.",
+            "vrinda": "Smart, fun, and a great friend. You add so much value to the group just by being you. It won't be the same if you aren't there!"
+        };
+
+        function unlockInvite() {
+            // Get input and clean it up
+            const input = document.getElementById('username').value.trim().toLowerCase();
+            const error = document.getElementById('errorMsg');
+            const login = document.getElementById('loginScreen');
+            const invite = document.getElementById('inviteScreen');
+            
+            // Check against database
+            if (friendData[input]) {
+                // Success Transition
+                login.classList.add('hidden');
+                invite.classList.remove('hidden');
+                
+                // Capitalize first letter for display
+                const capName = input.charAt(0).toUpperCase() + input.slice(1);
+                
+                // Inject Content
+                document.getElementById('greeting').innerText = `Welcome, ${capName} 👋`;
+                document.getElementById('personalNote').innerText = friendData[input];
+            } else {
+                // Error / Name not found
+                error.innerText = "ACCESS DENIED: Name not recognized in the VIP list. Try again.";
+            }
+        }
+        
+        function confirmAttendance() {
+            const phoneNumber = "8758926536";
+            const message = encodeURIComponent("I am coming!");
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // Allow pressing "Enter" key to submit
+        document.getElementById("username").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                unlockInvite();
+            }
+        });
+
+        // Particle Effect
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let particles = [];
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            
+            draw() {
+                ctx.fillStyle = `rgba(174, 198, 207, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function initParticles() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+        
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        
+        initParticles();
+        animateParticles();
+    </script>
+</body>
+</html>
